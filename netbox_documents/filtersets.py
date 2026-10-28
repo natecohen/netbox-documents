@@ -14,5 +14,7 @@ class DocumentFilterSet(NetBoxModelFilterSet):
             return queryset
         return queryset.filter(
             Q(name__icontains=value) |
-            Q(document__icontains=value)
+            Q(document__icontains=value) |
+            Q(external_url__icontains=value) |
+            Q(comments__icontains=value)
         )
