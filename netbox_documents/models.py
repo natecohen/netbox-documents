@@ -170,6 +170,13 @@ class Document(NetBoxModel):
                 "A document must be associated with an object. Add documents from the detail page "
                 "of the object they relate to."
             )
+        model_class = self.content_type.model_class()
+        if model_class is None:
+            raise ValidationError({'content_type': "Invalid object type."})
+        if not model_class._default_manager.filter(pk=self.object_id).exists():
+            raise ValidationError({
+                'object_id': f"No {model_class._meta.verbose_name} exists with ID {self.object_id}."
+            })
         if not self.document and self.external_url == '':
             raise ValidationError("A document must contain an uploaded file or an external URL.")
         if self.document and self.external_url:
